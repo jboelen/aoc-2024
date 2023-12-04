@@ -4,6 +4,6 @@
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "start": "node main.js"
+  "start": "node main.js"
   }
 }

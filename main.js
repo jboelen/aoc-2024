@@ -1,10 +1,15 @@
 const { readdirSync, mkdirSync, lstatSync, writeFileSync } = require('fs');
 const {resolve} = require('path');
 
+const defaultContent = (day) => `
+const {input} = require('../helpers');
+console.log('Day ${day}');
+`.trim();
+
 const folders = readdirSync('.')
-    .filter(entry => lstatSync(entry).isDirectory() && entry.match(/day/))
-    .map(entry => parseInt(entry.replace('day', '')))
-    .sort((a, b) => a - b);
+  .filter(entry => lstatSync(entry).isDirectory() && entry.match(/day/))
+  .map(entry => parseInt(entry.replace('day', '')))
+  .sort((a, b) => a - b);
 
 const latest = folders.at(-1);
 
@@ -17,15 +22,10 @@ const input = resolve(folder, 'input.txt');
 const exists = folders.includes(day);
 
 if (!exists){
-    mkdirSync(folder);
-    
-    writeFileSync(input, '');
-    writeFileSync(solution, `
-
-const {input} = require('../helpers');
-console.log('Day ${day}');
-
-`.trim());
+  mkdirSync(folder);
+  
+  writeFileSync(input, '');
+  writeFileSync(solution, defaultContent(day));
 }
 
 require(solution);
