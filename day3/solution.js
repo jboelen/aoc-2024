@@ -32,22 +32,22 @@ symbols.forEach(({symbol, row, col, index}) => {
   if (lookUp){
     push(up);
 
-    if(lookLeft) push(up - 1);
-    if(lookRight) push(up + 1);
+    if (lookLeft) push(up - 1);
+    if (lookRight) push(up + 1);
   }
 
   if (lookDown){
     push(down);
 
-    if(lookLeft) push(down - 1);
-    if(lookRight) push(down + 1);
+    if (lookLeft) push(down - 1);
+    if (lookRight) push(down + 1);
   }
 
-  if(lookLeft) push(index - 1);
-  if(lookRight) push(index + 1);
+  if (lookLeft) push(index - 1);
+  if (lookRight) push(index + 1);
 });
 
-const validPoisitions = values.filter(({index, length, symbol}) =>{
+const validPoisitions = values.filter(({index, length, symbol}) => {
   const start = index;
   const end = start + length - 1;
 
