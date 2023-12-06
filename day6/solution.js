@@ -1,16 +1,18 @@
-const {input} = require('../helpers');
-const [times, distances] = input.lines.map(line => line.split(':')[1].trim().split(/\s+/).map(Number));
+const {input, utils} = require('../helpers');
 
-const solve = ([t, d]) => {
-  const sqr = Math.sqrt(Math.pow(t, 2) - (4*(d + 0.5))) / 2;
-  const [high, low] = [Math.floor(t/2 + sqr), Math.floor(t/2 - sqr)];
+const [times, distances] = input.lines.map(line => line.split(':')[1]).map(utils.extractNumbers);
 
-  return high - low;
+const solve = ([time, distance]) => {
+  const sqr = Math.sqrt(Math.pow(time, 2) - (4 * (distance + 0.1))) / 2;
+  const [high, low] = [Math.floor(time/2 + sqr), Math.ceil(time/2 - sqr)];
+
+  return (high - low) + 1;
 }
 
-const races = times.map((t, index) => [t, distances[index]]);
+const races = utils.zip(times, distances);
+const part1 = races.map(solve).reduce(utils.multiply, 1);
 
-const part1 = races.map(solve).reduce((r, wins) => r * wins, 1);
-const part2 = solve([Number(times.join('')), Number(distances.join(''))])
+const race = [times, distances].map(values => Number(values.join('')));
+const part2 = solve(race)
 
-console.log(part1, part2)
+console.log(part1, part2);

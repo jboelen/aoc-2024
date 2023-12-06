@@ -25,7 +25,15 @@ module.exports.input = {
 }
 
 module.exports.utils =  {
+  // Reducers
+  sum: (result, value) => result + value,
+  multiply: (result, value) => result * value,
+
+  // Arrays
   clump: (array, number) => {
+    const remainder = array % number;
+    if (remainder) throw `Array length (${array.length}) not evenly divisible by ${number}.`;
+    
     const result = [];
 
     for(let i = 0; i < array.length; i += number){
@@ -34,5 +42,14 @@ module.exports.utils =  {
     }
 
     return result;
-  }
+  },
+  zip: (array1, array2) => {
+    const remainder = array1.length - array2.length;
+    if(remainder) throw `Arguments have differring lengths (${array1.length}, ${array2.length}).`;
+
+    return array1.map((v1, index) => [v1, v2[index]]);
+  },
+
+  // String
+  extractNumbers: (string, regex = /\s+/) => string.trim().split(regex).map(Number),
 }
