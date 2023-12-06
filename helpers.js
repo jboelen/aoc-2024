@@ -23,3 +23,16 @@ module.exports.input = {
     return input();
   }
 }
+
+module.exports.utils =  {
+  clump: (array, number) => {
+    const result = [];
+
+    for(let i = 0; i < array.length; i += number){
+      const slice = array.slice(i, i + number);
+      result.push(slice);
+    }
+
+    return result;
+  }
+}

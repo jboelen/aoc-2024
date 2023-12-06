@@ -1,85 +1,56 @@
-const {input} = require('../helpers');
+const {input, utils} = require('../helpers');
 
 const [seedline, ...mappings] = input.lines;
+
 const seeds = seedline.split(':')[1].trim().split(/\s+/).map(Number);
+const seedPairs = utils.clump(seeds, 2);
 
-const seedPairs = [];
-for(let i = 0; i < seeds.length; i+=2){
-  seedPairs.push([seeds[i], seeds[i + 1]]);
-}
-
-const maps = {};
-const mapIndex = {};
-
-let currentMap = '';
+const maps = [];
 mappings.forEach((line) => {
   if (line.length == 0) return;
-
-  if(line.match(/map:/)){
-    const [, mapName] = line.match(/^(.*) map:/);
-    const [from, to] = mapName.split('-to-');
-    mapIndex[from] = to;
-
-    currentMap = mapName;
-    maps[currentMap] = [];
-    return;
-  }
+  if (line.match(/map:/)) maps.push([]);
 
   const [destination, start, length] = line.split(/\s+/).map(Number);
-  maps[currentMap].push({destination, start, length})
+  maps.at(-1).push({destination, start, length, end: start + length});
 });
 
-const doLookup = (from, value) => {
-  const to = mapIndex[from];
-  if (!to) return value;
+const traceSeed = (value, index = 0) => {
+  if (index == maps.length) return value;
 
-  const mapName = [from, '-to-', mapIndex[from]].join('');
-  const map = maps[mapName].find(({start, length}) => value >= start && value < start + length);
+  const map = maps[index].find(({start, length}) => value >= start && value < start + length);
+  const next = map ? map.destination + (value - map.start) : value;
 
-  if (map){
-    const next = map.destination + (value - map.start);
-    return doLookup(to, next);
-  }
-
-  return doLookup(to, value);
+  return traceSeed(next, index + 1);
 }
 
-const findRanges = (maps, seed, range) => {
-  const map = maps.find(({start, length}) => seed >= start && seed < start + length);
-  const result = []
+const filterMappings = (range, index) => {
+  const mappings = maps[index] || []
+  const [rangeStart, rangeLength] = range;
+  
+  const mapping = mappings.find(({start, end}) => rangeStart >= start && rangeStart < end);
+  if (!mapping) return [[null, range]];
 
-  if (!map) return [{map, seed, range}];
-  result.push({map, seed, range: Math.min(range, map.length)});
+  const remainder = [mapping.end, rangeLength - mapping.length];
+  const remaining = remainder[1] > 0 ? filterMappings(remainder, index) : [];
 
-  const excess = range - map.length;
-  if (excess > 0){
-    result.push(...findRanges(maps, map.start + map.length, excess));
-  }
-
-  return result;
+  return [[mapping, [rangeStart, Math.min(rangeLength, mapping.length)]], ...remaining];
 }
 
-const doLookup2 = (from, [seed, range]) => {
-  const to = mapIndex[from];
-  if (!to) return [[seed, range]];
+const traceSeedRange = (seedRange, index = 0) => {
+  if (index == maps.length) return [seedRange];
 
-  const mapName = [from, '-to-', mapIndex[from]].join('');
-  const ranges = findRanges(maps[mapName], seed, range);
-  const result = []
+  const mappings = filterMappings(seedRange, index);
 
-  ranges.forEach(({map, seed, range}) => {
-    if (!map){
-      result.push(...doLookup2(to, [seed, range]));
-    } else {
-      result.push(...doLookup2(to, [map.destination + (seed - map.start), range]));
-    }
-  })
+  return mappings.flatMap(([mapping, range]) => {
+    const [rangeStart, rangeLength] = range;
+    const nextRange = mapping ? [mapping.destination + (rangeStart - mapping.start), rangeLength] : range;
 
-  return result;
+    return traceSeedRange(nextRange, index + 1);
+  });
 }
 
-const part1 = Math.min(...seeds.map((s) => doLookup('seed', s)));
+const part1 = Math.min(...seeds.map((seed) => traceSeed(seed)));
 console.log(part1)
 
-const part2 = seedPairs.flatMap((s) => doLookup2('seed', s));
+const part2 = seedPairs.flatMap((s) => traceSeedRange(s));
 console.log(Math.min(...part2.map(x => x[0])))
