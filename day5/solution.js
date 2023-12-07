@@ -1,9 +1,9 @@
-const {input, utils} = require('../helpers');
+import {input, utils} from '../helpers';
 
 const [seedline, ...mappings] = input.lines;
 
 const seeds = seedline.split(':')[1].trim().split(/\s+/).map(Number);
-const seedPairs = utils.clump(seeds, 2);
+const ranges = utils.clump(seeds, 2);
 
 const maps = [];
 mappings.forEach((line) => {
@@ -36,7 +36,7 @@ const filterMappings = (range, index) => {
   return [[mapping, [rangeStart, Math.min(rangeLength, mapping.length)]], ...remaining];
 }
 
-const traceSeedRange = (seedRange, index = 0) => {
+const traceRange = (seedRange, index = 0) => {
   if (index == maps.length) return [seedRange];
 
   const mappings = filterMappings(seedRange, index);
@@ -45,12 +45,14 @@ const traceSeedRange = (seedRange, index = 0) => {
     const [rangeStart, rangeLength] = range;
     const nextRange = mapping ? [mapping.destination + (rangeStart - mapping.start), rangeLength] : range;
 
-    return traceSeedRange(nextRange, index + 1);
+    return traceRange(nextRange, index + 1);
   });
 }
 
-const part1 = Math.min(...seeds.map((seed) => traceSeed(seed)));
-console.log(part1)
+const seedTraces = seeds.flatMap(seed => traceSeed(seed, 0));
+const part1 = Math.min(...seedTraces);
 
-const part2 = seedPairs.flatMap((s) => traceSeedRange(s));
-console.log(Math.min(...part2.map(x => x[0])))
+const rangeTraces = ranges.flatMap(range => traceRange(range, 0));
+const part2 = Math.min(...utils.pick(rangeTraces, 0));
+
+console.log(part1, part2);

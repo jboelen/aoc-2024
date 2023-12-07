@@ -1,4 +1,4 @@
-const {input} = require('../helpers');
+  import {input} from '../helpers';
 
 const nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 const searchers = [/\d/g, ...nums.map(n => new RegExp(n, "g"))];

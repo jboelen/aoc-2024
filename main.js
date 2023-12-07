@@ -1,10 +1,10 @@
-const { readdirSync, mkdirSync, lstatSync, writeFileSync } = require('fs');
-const {resolve} = require('path');
+import { readdirSync, mkdirSync, lstatSync, writeFileSync } from 'fs';
+import {resolve} from 'path';
 
 const defaultContent = (day) => `
-const {input} = require('../helpers');
-console.log('Day ${day}');
-`.trim();
+  import {input, utils} from '../helpers';
+  console.log(utils.cyan(input.full));
+`.trim().replace('  ', '');
 
 const folders = readdirSync('.')
   .filter(entry => lstatSync(entry).isDirectory() && entry.match(/day/))
@@ -12,20 +12,19 @@ const folders = readdirSync('.')
   .sort((a, b) => a - b);
 
 const latest = folders.at(-1);
-
 const day = parseInt(process.argv?.[2] || latest);
 
 const folder = resolve(process.cwd(), `day${day}`);
+const exists = folders.includes(day);
+
 const solution = resolve(folder, 'solution.js');
 const input = resolve(folder, 'input.txt');
 
-const exists = folders.includes(day);
-
-if (!exists){
+if (!exists){ 
   mkdirSync(folder);
   
-  writeFileSync(input, '');
+  writeFileSync(input, `Day ${day}`);
   writeFileSync(solution, defaultContent(day));
 }
 
-require(solution);
+await import(solution);

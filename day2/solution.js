@@ -1,10 +1,10 @@
-const {input} = require('../helpers');
+  import {input} from '../helpers';
 
 const roundColor = (round, color) => round.match(new RegExp(`(\\d+) ${color}`))?.[1] || 0
 const maxColor = (rounds, color) => Math.max(...rounds.map(r => roundColor(r, color)))
 
 const parseLine = (line) => {
-  const id = parseInt(line.match(/Game (\d+)/)[1]);
+  const id = parseInt(line.match(/Game (\d+)/)?.[1]);
   const rounds = line.split(';')
 
   const red = maxColor(rounds, 'red');

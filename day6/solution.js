@@ -1,9 +1,9 @@
-const {input, utils} = require('../helpers');
+import {input, utils} from '../helpers';
 
 const [times, distances] = input.lines.map(line => line.split(':')[1]).map(utils.extractNumbers);
 
 const solve = ([time, distance]) => {
-  const sqr = Math.sqrt(Math.pow(time, 2) - (4 * (distance + 0.1))) / 2;
+  const sqr = Math.sqrt(Math.pow(time, 2) - (4 * (distance + 1))) / 2;
   const [high, low] = [Math.floor(time/2 + sqr), Math.ceil(time/2 - sqr)];
 
   return (high - low) + 1;

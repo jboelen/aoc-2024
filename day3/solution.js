@@ -1,4 +1,4 @@
-const {input} = require('../helpers');
+  import {input} from '../helpers';
 const {lines} = input;
 
 const width = lines[0].length - 1;
