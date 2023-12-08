@@ -1,4 +1,4 @@
-  import {input} from '../helpers';
+import {input} from '../helpers';
 const {lines} = input;
 
 const width = lines[0].length - 1;
@@ -64,6 +64,7 @@ const validPoisitions = values.filter(({index, length, symbol}) => {
 const validGears = Object.values(gears).filter(values => values.length == 2);
 
 const part1 = validPoisitions.reduce((r, {symbol}) => r + parseInt(symbol), 0);
-const part2 = validGears.reduce((r, [g1, g2]) => r + g1 * g2, 0);
+console.log(part1);
 
-console.log(part1, part2);
+const part2 = validGears.reduce((r, [g1, g2]) => r + g1 * g2, 0);
+console.log(part2);

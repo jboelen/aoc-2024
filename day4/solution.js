@@ -1,7 +1,6 @@
-  import {input, utils} from '../helpers';
+import {input, utils} from '../helpers';
 
 const copies = new Array(input.lines.length).fill(1);
-let comparisons = 0;
 
 const cards = input.lines.map((line, index) => {
   const [, card, numbers] = line.match(/(\d+):(.*)/);
@@ -24,5 +23,8 @@ const cards = input.lines.map((line, index) => {
   }
 })
 
-const [part1, part2] = cards.reduce(([r1, r2], {value, copies}) => [r1 + value, r2 + copies], [0, 0]);
-console.log(part1, part2, comparisons);
+const part1 = utils.pick(cards, 'value').reduce(utils.sum);
+console.log(part1);
+
+const part2 = utils.pick(cards, 'copies').reduce(utils.sum);
+console.log(part2);

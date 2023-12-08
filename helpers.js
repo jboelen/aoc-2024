@@ -27,16 +27,23 @@ export const input = {
   }
 }
 
+const preserve = (any, fn) => Array.isArray(any) ? any.map(fn) : fn(any);
+
 export const utils =  {
   // Reducers
   sum: (result, value) => result + value,
   multiply: (result, value) => result * value,
-  extract: (array, regex) => array.map(line => line.match(regex).slice(1)),
-  object: (array, regex) => Object.fromEntries((regex ? utils.extract(array, regex) : array).map(([key, ...values]) => [key, values])),
+  extract: (value, regex) => preserve(value, string => string.match(regex).slice(1)),
+  objectFrom: (array, regex) => Object.fromEntries((regex ? utils.extract(array, regex) : array).map(([key, ...values]) => [key, values])),
 
-  // Arrays
-  pick: (array, property) => array.map(value => value[property]),
+  // Array or Object
+  pick: (any, property) => preserve(any, obj => obj[property]),
+
+  // Array
+  filter: (array, property) => array.filter(value => value[property]),
   range: (size, start = 0, increment = 1) => Array.from({length: size}, (_, i) => start + increment * i),
+
+  sumBy: (array, property) => utils.pick(array, property).map(Number).reduce(utils.sum),
 
   clump: (array, number) => {
     const remainder = array % number;
@@ -72,7 +79,7 @@ export const utils =  {
     return numbers.filter(Boolean);
   },
 
-  lcd: (array, max = 500) => {
+  lcm: (array, max = 500) => {
     let result = 1;
     let values = [...array];
     
@@ -80,14 +87,13 @@ export const utils =  {
     let prime = primes.shift();
     
     while(values.some(n => n > 1) && prime) {
-      if (values.some(value => value % prime == 0)){
-        values = values.map(value => value % prime == 0 ? value / prime : value);
-        result = result * prime;
-
+      if (values.every(value => value % prime > 0)){
+        prime = primes.shift();
         continue;
       }
-      
-      prime = primes.shift();
+
+      values = values.map(value => value % prime == 0 ? value / prime : value);
+      result = result * prime;
     }
 
     return result

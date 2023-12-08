@@ -2,7 +2,7 @@ import {input, utils} from '../helpers';
 
 const [seedline, ...mappings] = input.lines;
 
-const seeds = seedline.split(':')[1].trim().split(/\s+/).map(Number);
+const seeds = utils.extractNumbers(seedline.split(':')[1])
 const ranges = utils.clump(seeds, 2);
 
 const maps = [];
