@@ -8,20 +8,13 @@ const cardRank = (faceCards, tail) => {
   return [...faceCards, ...numberCards].reverse();
 };
 
-const countCards = (hand) => {
-  const breakdown = hand.split('').reduce((acc, card) => { acc[card] ||= 0; acc[card] += 1; return acc;}, {});
-  const ranked = Object.entries(breakdown).sort(([,a], [,b]) => a - b).filter(([card]) => card != 'J');
-  
-  return (breakdown['J'] || 0) + (ranked.at(-1)?.[1] || 0);
-}
-
 const config = {
   part1: {
     cards: cardRank(['A', 'K', 'Q', 'J']),
     types: [
       (hand) => !!hand.match(/(.)\1{4}/), // 5 of a kind
       (hand) => !!hand.match(/(.)(?=(.*\1){3})/), // 4 of a kind
-      (hand) => !!hand.match(/(.)(?=.*\1.*\1.*$)/) && !!hand.match(/(.)(?<!\1.+)(?!.*\1.*\1).*\1/), // Full house
+      (hand) => !!hand.match(/^(.)(?:\1)*(.)(?=(?:\1|\2)+$)/), // Full house
       (hand) => !!hand.match(/(.)(?=.*\1.*\1.*$)/), // 3 of a kind
       (hand) => !!hand.match(/(.)(?=.*?\1(?!.*\1)).*(.)(?=.*?\2(?!.*\2))/), // 2 pair
       (hand) => !!hand.match(/(.).*\1/), // 1 pair
@@ -33,7 +26,7 @@ const config = {
     cards: cardRank(['A', 'K', 'Q'], 'J'),
     types: [
       (hand) => !!hand.match(/(.)\1{4}|(.)(?<=^(\2|J)*)(?=(\2|J)*$)/), // 5 of a kind
-      (hand) => countCards(hand) == 4,
+      (hand) => !!hand.match(/.*(?=(?:(?:.*J){3})|(?:([^J])(?:.*\1){3})|(?:(?=.*J)(?=.*([^J])(.*\2){2}))|(?:(?=(?:.*J){2})(?=.*([^J])(.*\4){1}))).*/), // 4 of a kind
       (hand) => !!hand.match(/^J?(.)(?:\1|J)*(.)(?=(?:\1|\2|J)+$)/), // Full house
       (hand) => !!hand.match(/(?:J.*J)|(.)(((?<=J.*)(?=.*\1))|(?=(.*(\1|J)){2}))/), // 3 of a kind
       (hand) => !!hand.match(/(.)(?=.*?\1(?!.*\1)).*(.)(?=.*?\2(?!.*\2))/), // 2 pair
@@ -42,7 +35,6 @@ const config = {
     ]
   }
 }
-
 
 const makeCardValue = (cards) => (card, index) => cards.indexOf(card) * Math.pow(10, 8 - index * 2);
 const makeTypeValue = (types) => (hand) => types.findIndex((matcher) => matcher(hand));
