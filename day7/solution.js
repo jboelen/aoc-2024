@@ -54,10 +54,6 @@ const sortHands = (config) => ([hand1], [hand2]) => {
   const [h1Type, h1Value] = handValue(hand1);
   const [h2Type, h2Value] = handValue(hand2);
 
-  // if (hand1.match('J') || hand2.match('J')){
-  //   console.log([hand1, h1Type], [hand2, h2Type]);
-  // }
-
   const type = h2Type - h1Type;
   if (type != 0) return type;
 
@@ -67,8 +63,5 @@ const sortHands = (config) => ([hand1], [hand2]) => {
 const answer = (config, hands) => hands.sort(sortHands(config)).map(([,bet], index) => Number(bet) * (index + 1)).reduce(utils.sum)
 
 console.log(hands.sort(sortHands(config.part2)).map(([hand]) => [hand, ...makeHandValue(config.part2)(hand)]).filter(([hand]) => hand[3] =='J'))
-console.log(answer(config.part1, hands))
-console.log(answer(config.part2, hands))
-
-//250254244
-// 250087440
+console.log(answer(config.part1, hands));
+console.log(answer(config.part2, hands));
