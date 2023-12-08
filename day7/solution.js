@@ -61,7 +61,5 @@ const sortHands = (config) => ([hand1], [hand2]) => {
 } 
 
 const answer = (config, hands) => hands.sort(sortHands(config)).map(([,bet], index) => Number(bet) * (index + 1)).reduce(utils.sum)
-
-console.log(hands.sort(sortHands(config.part2)).map(([hand]) => [hand, ...makeHandValue(config.part2)(hand)]).filter(([hand]) => hand[3] =='J'))
 console.log(answer(config.part1, hands));
 console.log(answer(config.part2, hands));
