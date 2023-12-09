@@ -100,7 +100,7 @@ export const utils =  {
   },
 
   // String
-  extractNumbers: (string, regex) => string.trim().split(regex instanceof RegExp ? regex : /\s+/).map(Number),
+  extractNumbers: (string, regex) => preserve(string, string => string.trim().split(regex instanceof RegExp ? regex : /\s+/).map(Number)),
   cyan: (string) => `\x1b[36m${string}\x1b[0m`,
 
   // Other

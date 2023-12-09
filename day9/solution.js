@@ -1,25 +1,24 @@
 import {input, utils} from '../helpers';
-const report = input.lines.map(l => utils.extractNumbers(l))
+const report = utils.extractNumbers(input.lines);
 
-const extrapolate = (side, line) => {
+const extrapolate = (line) => {
   if (line.every(n => n == 0)) return 0;
-
-  const [multiplier, index] = side == 'left' ? [1, 0] : [-1, -1];
   
   const next = line.reduce((result, number, index) => {
     if (index + 1 == line.length) return result;
-
-    const difference = number - line[index + 1];
-    const value = multiplier * difference;
-
-    result.push(value);
+    
+    const difference = line[index + 1] - number;
+    result.push(difference);
 
     return result;
   }, []);
 
-  return line.at(index) + extrapolate(side, next)
+  return line.at(-1) + extrapolate(next);
 }
 
-const [part2, part1] = ['left', 'right'].map(side => report.map(line => extrapolate(side, line)).reduce(utils.sum))
+const part1 = report.map(extrapolate).reduce(utils.sum);
 console.log(part1);
+
+const etalopartxe = (line) => extrapolate(line.reverse());
+const part2 = report.map(etalopartxe).reduce(utils.sum);
 console.log(part2);
